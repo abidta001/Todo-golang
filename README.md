@@ -3,6 +3,8 @@
 
 A simple To-Do application built using [Golang Fiber](https://gofiber.io/), GORM, and PostgreSQL. The app allows users to register, authenticate using JWT, and manage their tasks.
 
+API Documentation : https://documenter.getpostman.com/view/37757537/2sAYkGJdig
+
 ## 🚀 Features
 - User Authentication (JWT-based)
 - Add, View, Update, and Delete Tasks
