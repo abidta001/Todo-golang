@@ -22,6 +22,7 @@ func main() {
 	task.Post("/create", middleware.JWTMiddleware(), controllers.CreateTask)
 	task.Get("/view", middleware.JWTMiddleware(), controllers.ViewTasks)
 	task.Put("/update/:id", middleware.JWTMiddleware(), controllers.UpdateTask)
+	task.Delete("/delete/:id", middleware.JWTMiddleware(), controllers.DeleteTask)
 
 	app.Listen(":3000")
 }

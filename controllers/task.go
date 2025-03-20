@@ -76,3 +76,21 @@ func UpdateTask(c *fiber.Ctx) error {
 		"Status": task.Status,
 	})
 }
+func DeleteTask(c *fiber.Ctx) error {
+	taskID, err := c.ParamsInt("id")
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+	userID, ok := c.Locals("user_id").(uint)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid User"})
+	}
+	var task models.Task
+	if err := database.DB.Where("id=? and user_id=?", taskID, userID).First(&task).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Task not found"})
+	}
+	if err := database.DB.Delete(&task).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not delete task"})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Task deleted successfully"})
+}
