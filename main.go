@@ -12,10 +12,6 @@ func main() {
 	app := fiber.New()
 	database.InitDB()
 
-	//Univeral
-	app.Get("/listusers", controllers.ListUser)
-	app.Get("/viewtasks", controllers.ViewTasks)
-
 	//User Routes
 	user := app.Group("/user")
 	user.Post("/signup", controllers.SignupUser)
@@ -24,6 +20,7 @@ func main() {
 	//Task Routes
 	task := app.Group("/task")
 	task.Post("/create", middleware.JWTMiddleware(), controllers.CreateTask)
+	task.Get("/view", middleware.JWTMiddleware(), controllers.ViewTasks)
 
 	app.Listen(":3000")
 }

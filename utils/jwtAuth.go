@@ -6,12 +6,14 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var JWTSecretKey = "This is my secretkey"
+var JWTSecretKey = "your_secret_key"
 
-func GenerateJWT(email string) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email": email,
-		"exp":   time.Now().Add(time.Hour * 5).Unix(),
-	})
+func GenerateJWT(userID uint) (string, error) {
+	claims := jwt.MapClaims{
+		"id":  userID,                                
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(JWTSecretKey))
 }

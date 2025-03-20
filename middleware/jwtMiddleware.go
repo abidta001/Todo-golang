@@ -1,10 +1,11 @@
 package middleware
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 	"strings"
 	"todo/utils"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func JWTMiddleware() fiber.Handler {
@@ -22,6 +23,19 @@ func JWTMiddleware() fiber.Handler {
 		if err != nil || !token.Valid {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid token"})
 		}
+
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid token claims"})
+		}
+
+		idFloat, exists := claims["id"].(float64)
+		if !exists {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Missing user ID in token"})
+		}
+
+		userID := uint(idFloat)
+		c.Locals("user_id", userID)
 
 		return c.Next()
 	}

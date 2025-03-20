@@ -34,24 +34,20 @@ func LoginUser(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
+
 	var user models.User
-	if err := database.DB.Where("email=?", input.Email).First(&user).Error; err != nil {
+	if err := database.DB.Where("email = ?", input.Email).First(&user).Error; err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid email"})
 	}
+
 	if !utils.CheckHashedPassword(input.Password, user.Password) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid Password"})
 	}
-	token, err := utils.GenerateJWT(user.Email)
+
+	token, err := utils.GenerateJWT(user.ID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Token generation failed"})
 	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"token": token})
-}
 
-func ListUser(c *fiber.Ctx) error {
-	var users []models.User
-	if err := database.DB.Find(&users).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Unable to fetch Users"})
-	}
-	return c.Status(fiber.StatusOK).JSON(users)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"token": token})
 }

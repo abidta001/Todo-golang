@@ -4,6 +4,7 @@ import "gorm.io/gorm"
 
 type Task struct {
 	gorm.Model
-	Description string
-	IsCompleted bool
+	Title  string `gorm:"not null"`
+	Status string `gorm:"default:'pending'"`
+	UserID uint   `gorm:"not null"`
 }
