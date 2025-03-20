@@ -46,3 +46,29 @@ func ViewTasks(c *fiber.Ctx) error {
 
 	return c.JSON(tasks)
 }
+func UpdateTask(c *fiber.Ctx) error {
+	taskID := c.Params("id")
+
+	var input struct {
+		Title  string `json:"title"`
+		Status string `json:"status"`
+	}
+	err := c.BodyParser(&input)
+	if err != nil {
+		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid Request"})
+	}
+	user_id, ok := c.Locals("user_id").(uint)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid User"})
+	}
+	var task models.Task
+	if err := database.DB.Where("id=? and user_id=?", taskID, user_id).First(&task).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Task not found!"})
+	}
+	task.Title = input.Title
+	task.Status = input.Status
+	if err := database.DB.Save(&task).Error; err != nil {
+		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not update task"})
+	}
+	return c.Status(fiber.StatusOK).JSON(task)
+}

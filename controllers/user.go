@@ -22,7 +22,11 @@ func SignupUser(c *fiber.Ctx) error {
 	if err := database.DB.Create(&user).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "User not created"})
 	}
-	return c.Status(fiber.StatusCreated).JSON("Signup Succesful!")
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"userID": user.ID,
+		"Name":   user.Name,
+		"Email":  user.Email,
+	})
 }
 
 func LoginUser(c *fiber.Ctx) error {
