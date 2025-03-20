@@ -21,6 +21,7 @@ func main() {
 	task := app.Group("/task")
 	task.Post("/create", middleware.JWTMiddleware(), controllers.CreateTask)
 	task.Get("/view", middleware.JWTMiddleware(), controllers.ViewTasks)
+	task.Put("/update/:id", middleware.JWTMiddleware(), controllers.UpdateTask)
 
 	app.Listen(":3000")
 }

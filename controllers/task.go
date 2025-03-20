@@ -70,5 +70,9 @@ func UpdateTask(c *fiber.Ctx) error {
 	if err := database.DB.Save(&task).Error; err != nil {
 		c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not update task"})
 	}
-	return c.Status(fiber.StatusOK).JSON(task)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"ID":     task.ID,
+		"Title":  task.Title,
+		"Status": task.Status,
+	})
 }
